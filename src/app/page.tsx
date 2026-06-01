@@ -89,8 +89,8 @@ export default function Home() {
             try {
               let css = tag.innerHTML;
               if (css) {
-                // Remove property declarations containing oklch, oklab, or color-mix
-                css = css.replace(/[a-zA-Z0-9_\-]+\s*:\s*[^;]*?(oklch|oklab|color-mix)[^;]*/gi, '/* stripped modern color */');
+                // Remove property declarations containing oklch, oklab, lab, lch, or color-mix
+                css = css.replace(/[a-zA-Z0-9_\-]+\s*:\s*[^;]*?\b(oklch|oklab|lab|lch|color-mix)\b[^;]*/gi, '/* stripped modern color */');
                 tag.innerHTML = css;
               }
             } catch (e) {
