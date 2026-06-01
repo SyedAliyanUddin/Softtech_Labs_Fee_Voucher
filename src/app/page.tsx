@@ -83,24 +83,44 @@ export default function Home() {
             el.style.borderRadius = '0';
           }
           
-          // Scrub style tags inside the clone to strip oklch/oklab/color-mix
-          const styleTags = clonedDoc.querySelectorAll('style');
-          styleTags.forEach(tag => {
-            try {
-              let css = tag.innerHTML;
-              if (css) {
-                // Remove property declarations containing oklch, oklab, lab, lch, or color-mix
-                css = css.replace(/[a-zA-Z0-9_\-]+\s*:\s*[^;]*?\b(oklch|oklab|lab|lch|color-mix)\b[^;]*/gi, '/* stripped modern color */');
-                tag.innerHTML = css;
+          // Extract and clean all CSS from parent document styleSheets to bypass color-mix/oklab/lab parsing failures
+          let combinedCss = '';
+          try {
+            for (let i = 0; i < document.styleSheets.length; i++) {
+              const sheet = document.styleSheets[i];
+              try {
+                const rules = sheet.cssRules || sheet.rules;
+                if (rules) {
+                  for (let j = 0; j < rules.length; j++) {
+                    combinedCss += rules[j].cssText + '\n';
+                  }
+                }
+              } catch (e) {
+                console.warn("Could not read stylesheet rules:", e);
               }
-            } catch (e) {
-              console.error("Failed to clean style tag", e);
+            }
+          } catch (e) {
+            console.error("Error reading stylesheets", e);
+          }
+
+          // Clean oklch, oklab, lab, lch, color-mix from the combined CSS
+          combinedCss = combinedCss.replace(/[a-zA-Z0-9_\-]+\s*:\s*[^;]*?\b(oklch|oklab|lab|lch|color-mix)\b[^;]*/gi, '/* stripped modern color */');
+
+          // Remove local Next.js style and link tags in the clone
+          clonedDoc.querySelectorAll('style, link[rel="stylesheet"]').forEach(el => {
+            if (el.tagName === 'STYLE') {
+              el.remove();
+            } else if (el.tagName === 'LINK') {
+              const href = el.getAttribute('href');
+              if (href && (href.startsWith('/') || href.includes(window.location.host) || href.includes('_next'))) {
+                el.remove();
+              }
             }
           });
 
-          // Inject a print-safe style override into the clone
-          const styleTag = clonedDoc.createElement('style');
-          styleTag.innerHTML = `
+          // Inject the clean combined CSS into the clone
+          const cleanStyleTag = clonedDoc.createElement('style');
+          cleanStyleTag.innerHTML = combinedCss + `
             * { 
               color-scheme: dark !important; 
               -webkit-print-color-adjust: exact !important;
@@ -109,7 +129,7 @@ export default function Home() {
             .neon-border { box-shadow: none !important; border-color: #ff0000 !important; }
             .page-break { page-break-inside: avoid !important; break-inside: avoid !important; }
           `;
-          clonedDoc.head.appendChild(styleTag);
+          clonedDoc.head.appendChild(cleanStyleTag);
         }
       },
       jsPDF: {
