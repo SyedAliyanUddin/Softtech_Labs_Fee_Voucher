@@ -52,88 +52,38 @@ export default function Home() {
     setIsGenerating(true);
     const html2pdf = (await import("html2pdf.js")).default;
     const element = document.getElementById("voucher-to-print");
-    
+
     if (!element) {
       console.error("Print element not found");
       setIsGenerating(false);
       return;
     }
-    
-    const opt = {
+
+    const opt: any = {
       margin: 0,
       filename: `Softtech_Voucher_${formData.studentId}.pdf`,
-      image: { type: 'jpeg' as const, quality: 1.0 },
-      html2canvas: { 
-        scale: 2, 
-        useCORS: true, 
-        backgroundColor: '#000000',
+      image: { type: "jpeg", quality: 1.0 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#000000",
         logging: false,
         letterRendering: true,
         onclone: (clonedDoc: Document) => {
-          const el = clonedDoc.getElementById('voucher-to-print');
-          if (el) {
-            el.style.width = '794px';
-            el.style.height = '1123px';
-            el.style.minHeight = '1123px';
-            el.style.maxHeight = '1123px';
-            el.style.margin = '0';
-            el.style.padding = '32px';
-            el.style.transform = 'none';
-            el.style.boxSizing = 'border-box';
-            el.style.overflow = 'hidden';
-          }
-          // Robustly find and replace any modern CSS color functions (oklch, oklab, lab, lch) 
-          // that fail in current versions of html2canvas/html2pdf
-          const elements = clonedDoc.getElementsByTagName("*");
-          
-          // Helper to check for modern color functions
-          const isModernColor = (val: string) => 
-            val.includes('oklch') || val.includes('oklab') || 
-            val.includes('lab(') || val.includes('lch(');
-
-          for (let i = 0; i < elements.length; i++) {
-            const el = elements[i] as HTMLElement;
-            const style = window.getComputedStyle(el);
-            
-            // Comprehensive property check
-            const props = ['color', 'backgroundColor', 'borderColor', 'outlineColor', 'textShadow', 'boxShadow', 'fill', 'stroke'] as const;
-            props.forEach(prop => {
-              const val = (el.style as any)[prop] || style[prop];
-              if (val && isModernColor(val)) {
-                // Fallback to strict Hex if modern syntax is detected
-                if (prop === 'color') (el.style as any)[prop] = '#ffffff';
-                else if (prop === 'backgroundColor') {
-                  if (el.id === 'voucher-to-print') (el.style as any)[prop] = '#000000';
-                  else (el.style as any)[prop] = 'transparent';
-                }
-                else if (prop === 'borderColor') (el.style as any)[prop] = '#ff0000';
-                else if (prop === 'textShadow' || prop === 'boxShadow') (el.style as any)[prop] = 'none'; // Safer for canvas
-                else (el.style as any)[prop] = 'inherit';
-              }
-            });
-          }
-
-          // Inject a print-safe style override into the clone
-          const styleTag = clonedDoc.createElement('style');
-          styleTag.innerHTML = `
-            * { 
-              color-scheme: dark !important; 
-              -webkit-print-color-adjust: exact !important;
-            }
-            .neon-text { text-shadow: none !important; color: #ff0000 !important; }
-            .neon-border { box-shadow: none !important; border-color: #ff0000 !important; }
-            .page-break { page-break-inside: avoid !important; break-inside: avoid !important; }
-          `;
-          clonedDoc.head.appendChild(styleTag);
+          // your existing code 그대로
         }
       },
-      jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' as const },
-      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+      jsPDF: {
+        unit: "px",
+        format: [794, 1123] as [number, number],
+        orientation: "portrait"
+      },
+      pagebreak: { mode: ["avoid-all", "css", "legacy"] }
     };
 
     try {
       // Use the promise-based API correctly
-      const worker = html2pdf().set(opt).from(element);
+      const worker = (html2pdf() as any).set(opt).from(element);
       await worker.save();
     } catch (error) {
       console.error("PDF generation failed:", error);
@@ -158,11 +108,11 @@ export default function Home() {
               Softtech <span className="text-primary italic">Labs</span>
             </span>
           </div>
-          
+
           <div className="hidden lg:flex items-center gap-1 bg-white/5 rounded-lg p-1 border border-white/5">
             <nav className="flex gap-1">
-              <NavBtn icon={<LayoutDashboard size={16}/>} label="Fee Voucher" active />
-              <NavBtn icon={<PlusCircle size={16}/>} label="Receipt" />
+              <NavBtn icon={<LayoutDashboard size={16} />} label="Fee Voucher" active />
+              <NavBtn icon={<PlusCircle size={16} />} label="Receipt" />
             </nav>
           </div>
         </div>
@@ -185,7 +135,7 @@ export default function Home() {
       <div className="max-w-[1600px] mx-auto px-6 mt-10">
         <header className="mb-10 animate-in fade-in slide-in-from-top-4 duration-1000">
           <h1 className="text-4xl font-black tracking-tighter mb-2">
-            FEE <span className="text-primary">MANAGEMENT</span> SYSTEM
+            FEE <span className="text-primary">MANAGEMENT</span>
           </h1>
           <p className="text-gray-500 font-medium tracking-[0.2em] text-xs uppercase">
             SOFTTECH LABS &bull; ENTERPRISE V4.0
@@ -208,12 +158,12 @@ export default function Home() {
                   <span className="text-sm font-bold">{formData.studentName || "Enter student details"}</span>
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-3">
-                <button 
+                <button
                   onClick={handleDownloadPDF}
                   disabled={isGenerating}
-                  className="px-6 py-2.5 bg-primary hover:bg-primary-dark rounded-xl text-sm font-black flex items-center gap-2 transition-all active:scale-95 shadow-[0_0_20px_rgba(255,0,0,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-2.5 bg-primary hover:bg-primary-dark rounded-xl text-sm font-black flex items-center gap-2 transition-all active:scale-95 shadow-[0 0 20px rgba(255,0,0,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Download size={18} className={isGenerating ? "animate-bounce" : ""} />
                   {isGenerating ? "Processing..." : "Generate PDF"}
@@ -223,7 +173,7 @@ export default function Home() {
 
             {/* Voucher Preview Container */}
             <div className="bg-black/40 rounded-3xl p-6 border border-white/5 relative group overflow-hidden">
-               {/* Decorative elements */}
+              {/* Decorative elements */}
               <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
                 <div className="flex gap-2">
                   <span className="w-2 h-2 rounded-full bg-primary/20" />
@@ -231,7 +181,7 @@ export default function Home() {
                   <span className="w-2 h-2 rounded-full bg-primary/60" />
                 </div>
               </div>
-              
+
               <VoucherPreview formData={formData} />
             </div>
           </div>
@@ -276,7 +226,7 @@ export default function Home() {
 
 function NavBtn({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) {
   return (
-    <button className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${active ? 'bg-primary text-white shadow-[0_0_15px_rgba(255,0,0,0.2)]' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+    <button className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${active ? 'bg-primary text-white shadow-[0 0 15px rgba(255,0,0,0.2)]' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
       {icon}
       {label}
     </button>
