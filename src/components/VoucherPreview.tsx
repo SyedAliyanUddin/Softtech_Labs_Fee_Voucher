@@ -8,11 +8,15 @@ interface VoucherPreviewProps {
 }
 
 export default function VoucherPreview({ formData }: VoucherPreviewProps) {
-  const currentDate = new Date().toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric'
-  });
+  const [currentDate, setCurrentDate] = React.useState("");
+
+  React.useEffect(() => {
+    setCurrentDate(new Date().toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }));
+  }, []);
 
   return (
     <div 

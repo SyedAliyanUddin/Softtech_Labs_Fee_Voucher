@@ -12,7 +12,7 @@ const initialState = {
   courseName: "Full Stack Development",
   batchTiming: "",
   contactNumber: "",
-  studentId: "SL-" + Math.floor(100000 + Math.random() * 900000),
+  studentId: "",
   courseFee: 0,
   lateFine: 3000,
   discount: 0,
@@ -20,12 +20,21 @@ const initialState = {
   dueDate: "",
   applyLateFine: false,
   totalAmount: 0,
-  voucherId: "V-" + Math.random().toString(36).substr(2, 9).toUpperCase(),
+  voucherId: "",
 };
 
 export default function Home() {
   const [formData, setFormData] = useState(initialState);
   const [isGenerating, setIsGenerating] = useState(false);
+
+  // Initialize random IDs on client side to prevent hydration mismatches
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      studentId: prev.studentId || "SL-" + Math.floor(100000 + Math.random() * 900000),
+      voucherId: prev.voucherId || "V-" + Math.random().toString(36).substring(2, 11).toUpperCase(),
+    }));
+  }, []);
 
   // Auto-calculate Total Amount
   const calculateTotal = useCallback(() => {
