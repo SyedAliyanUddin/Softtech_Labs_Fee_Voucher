@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { Download, LayoutDashboard, PlusCircle, Bell, Search, UserCircle } from "lucide-react";
+import { Download, LayoutDashboard, PlusCircle, Bell, Search, UserCircle, CreditCard } from "lucide-react";
 import ReceiptForm from "@/components/ReceiptForm";
 import ReceiptPreview from "@/components/ReceiptPreview";
 import Link from "next/link";
@@ -91,14 +91,18 @@ export default function ReceiptPage() {
           </div>
 
           <div style={{ display: "flex", gap: "4px", alignItems: "center", backgroundColor: "rgba(255,255,255,0.05)", borderRadius: "8px", padding: "4px", border: "1px solid rgba(255,255,255,0.05)", flexWrap: "wrap" }} className="flex items-center gap-1 bg-white/5 rounded-lg p-1 border border-white/5">
-            <nav className="flex gap-1">
-              <Link href="/" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold", color: "#9ca3af", transition: "all 0.2s" }} className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5">
+            <nav className="flex gap-1 flex-wrap">
+              <Link href="/" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold", color: "#9ca3af", transition: "all 0.2s", textDecoration: "none" }} className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5">
                 <LayoutDashboard size={16} />
                 Fee Voucher
               </Link>
-              <Link href="/receipt" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold", backgroundColor: "#22c55e", color: "#ffffff", boxShadow: "0 0 15px rgba(34,197,94,0.2)" }} className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold bg-green-500 text-white">
+              <Link href="/receipt" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold", backgroundColor: "#22c55e", color: "#ffffff", boxShadow: "0 0 15px rgba(34,197,94,0.2)", textDecoration: "none" }} className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold bg-green-500 text-white">
                 <PlusCircle size={16} />
                 Receipt
+              </Link>
+              <Link href="/idcard" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold", color: "#9ca3af", transition: "all 0.2s", textDecoration: "none" }} className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5">
+                <CreditCard size={16} />
+                ID Card
               </Link>
             </nav>
           </div>
