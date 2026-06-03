@@ -21,10 +21,11 @@ export default function VoucherPreview({ formData }: VoucherPreviewProps) {
   return (
     <div 
       id="voucher-to-print" 
-      className="bg-black text-white p-8 rounded-2xl border shadow-xl relative overflow-hidden flex flex-col mx-auto page-break"
+      className="bg-black text-white p-8 rounded-2xl border shadow-xl relative flex flex-col mx-auto page-break"
       style={{ 
-        width: '100%',
-        maxWidth: '794px', 
+        width: '794px',
+        minWidth: '794px',
+        height: '1123px',
         minHeight: '1123px', 
         boxSizing: 'border-box', 
         backgroundColor: '#000000', 

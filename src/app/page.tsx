@@ -63,9 +63,18 @@ export default function Home() {
       const dataUrl = await toPng(element, {
         quality: 1.0,
         pixelRatio: 2,
+        width: 794,
+        height: 1123,
         style: {
+          width: '794px',
+          minWidth: '794px',
+          maxWidth: '794px',
+          height: '1123px',
+          minHeight: '1123px',
+          maxHeight: '1123px',
           transform: 'none',
           boxShadow: 'none',
+          margin: '0',
         }
       });
 
@@ -162,8 +171,10 @@ export default function Home() {
               </div>
             </div>
 
-            <div style={{ backgroundColor: "rgba(0,0,0,0.4)", borderRadius: "24px", padding: "24px", border: "1px solid rgba(255,255,255,0.05)", position: "relative" }} className="bg-black/40 rounded-3xl p-6 border border-white/5 relative group overflow-hidden">
-              <VoucherPreview formData={formData} />
+            <div style={{ backgroundColor: "rgba(0,0,0,0.4)", borderRadius: "24px", padding: "24px", border: "1px solid rgba(255,255,255,0.05)", position: "relative" }} className="bg-black/40 rounded-3xl p-6 border border-white/5 relative group overflow-x-auto">
+              <div className="w-fit mx-auto">
+                <VoucherPreview formData={formData} />
+              </div>
             </div>
           </div>
         </div>
