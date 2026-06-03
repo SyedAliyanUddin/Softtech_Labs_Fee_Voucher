@@ -92,6 +92,7 @@ export default function IdCardForm({ formData, setFormData, photoPreview, setPho
         <InputField label="Father Name" name="fatherName" icon={<User className="w-4 h-4" />} placeholder="Enter father's name" value={formData.fatherName} onChange={handleChange} />
         <InputField label="Student ID" name="studentId" icon={<Hash className="w-4 h-4" />} placeholder="SL-000001" value={formData.studentId} onChange={handleChange} />
         <InputField label="Contact Number" name="contactNumber" icon={<Phone className="w-4 h-4" />} placeholder="+92 3XX XXXXXXX" value={formData.contactNumber} onChange={handleChange} />
+        <InputField label="Batch Timing" name="timing" icon={<Hash className="w-4 h-4" />} placeholder="09:00 AM - 11:00 AM" value={formData.timing} onChange={handleChange} />
 
         <div className="space-y-1.5">
           <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
