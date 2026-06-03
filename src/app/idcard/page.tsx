@@ -13,6 +13,7 @@ const initialState = {
   contactNumber: "",
   courseName: "Full Stack Development",
   bloodGroup: "",
+  timing: "09:00 AM - 11:00 AM",
 };
 
 export default function IdCardPage() {
@@ -39,13 +40,13 @@ export default function IdCardPage() {
       const dataUrl = await toPng(element, {
         quality: 1.0,
         pixelRatio: 3,
-        width: 510,
-        height: 810,
+        width: 1100,
+        height: 850,
         style: {
-          width: '510px',
-          minWidth: '510px',
-          height: '810px',
-          minHeight: '810px',
+          width: '1100px',
+          minWidth: '1100px',
+          height: '850px',
+          minHeight: '850px',
           transform: 'none',
           boxShadow: 'none',
           margin: '0',
@@ -53,12 +54,12 @@ export default function IdCardPage() {
       });
 
       const pdf = new jsPDF({
-        orientation: "portrait",
+        orientation: "landscape",
         unit: "px",
-        format: [510, 810]
+        format: [1100, 850]
       });
 
-      pdf.addImage(dataUrl, 'PNG', 0, 0, 510, 810);
+      pdf.addImage(dataUrl, 'PNG', 0, 0, 1100, 850);
       pdf.save(`Softtech_IDCard_${formData.studentId}.pdf`);
     } catch (error) {
       console.error("PDF generation failed:", error);
