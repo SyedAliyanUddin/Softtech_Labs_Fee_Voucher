@@ -46,108 +46,45 @@ export default function Home() {
   }, [calculateTotal]);
 
   const handleDownloadPDF = async () => {
-  setIsGenerating(true);
-  
-  try {
-    const html2pdf = (await import("html2pdf.js")).default;
-    const element = document.getElementById("voucher-to-print");
+    setIsGenerating(true);
     
-    if (!element) {
-      console.error("Print element not found");
-      setIsGenerating(false);
-      return;
-    }
+    try {
+      const { toPng } = await import("html-to-image");
+      const { jsPDF } = await import("jspdf");
+      
+      const element = document.getElementById("voucher-to-print");
+      
+      if (!element) {
+        console.error("Print element not found");
+        setIsGenerating(false);
+        return;
+      }
 
-    const opt: any = {
-      margin: 0,
-      filename: `Softtech_Voucher_${formData.studentId}.pdf`,
-      image: { type: "jpeg", quality: 1.0 },
-      html2canvas: {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#000000",
-        logging: false,
-        letterRendering: true,
-        onclone: (clonedDoc: Document) => {
-          const el = clonedDoc.getElementById('voucher-to-print');
-          if (el) {
-            el.style.width = '794px';
-            el.style.height = '1123px';
-            el.style.minHeight = '1123px';
-            el.style.maxHeight = '1123px';
-            el.style.margin = '0';
-            el.style.padding = '32px';
-            el.style.transform = 'none';
-            el.style.boxSizing = 'border-box';
-            el.style.overflow = 'hidden';
-            el.style.borderRadius = '0';
-          }
-          
-          // Extract and clean all CSS from parent document styleSheets to bypass color-mix/oklab/lab parsing failures
-          let combinedCss = '';
-          try {
-            for (let i = 0; i < document.styleSheets.length; i++) {
-              const sheet = document.styleSheets[i];
-              try {
-                const rules = sheet.cssRules || sheet.rules;
-                if (rules) {
-                  for (let j = 0; j < rules.length; j++) {
-                    combinedCss += rules[j].cssText + '\n';
-                  }
-                }
-              } catch (e) {
-                console.warn("Could not read stylesheet rules:", e);
-              }
-            }
-          } catch (e) {
-            console.error("Error reading stylesheets", e);
-          }
-
-          // Clean oklch, oklab, lab, lch, color-mix from the combined CSS
-          combinedCss = combinedCss.replace(/[a-zA-Z0-9_\-]+\s*:\s*[^;]*?\b(oklch|oklab|lab|lch|color-mix)\b[^;]*/gi, '/* stripped modern color */');
-
-          // Remove local Next.js style and link tags in the clone
-          clonedDoc.querySelectorAll('style, link[rel="stylesheet"]').forEach(el => {
-            if (el.tagName === 'STYLE') {
-              el.remove();
-            } else if (el.tagName === 'LINK') {
-              const href = el.getAttribute('href');
-              if (href && (href.startsWith('/') || href.includes(window.location.host) || href.includes('_next'))) {
-                el.remove();
-              }
-            }
-          });
-
-          // Inject the clean combined CSS into the clone
-          const cleanStyleTag = clonedDoc.createElement('style');
-          cleanStyleTag.innerHTML = combinedCss + `
-            * { 
-              color-scheme: dark !important; 
-              -webkit-print-color-adjust: exact !important;
-            }
-            .neon-text { text-shadow: none !important; color: #ff0000 !important; }
-            .neon-border { box-shadow: none !important; border-color: #ff0000 !important; }
-            .page-break { page-break-inside: avoid !important; break-inside: avoid !important; }
-          `;
-          clonedDoc.head.appendChild(cleanStyleTag);
+      const dataUrl = await toPng(element, {
+        quality: 1.0,
+        pixelRatio: 2,
+        style: {
+          transform: 'none',
+          boxShadow: 'none',
         }
-      },
-      jsPDF: {
-        unit: "px",
-        format: [794, 1123],
-        orientation: "portrait"
-      },
-      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-    };
+      });
 
-    await html2pdf().set(opt).from(element).save();
-  } catch (error) {
-    console.error("PDF generation failed:", error);
-    alert("Failed to generate PDF. Please try again.");
-  } finally {
-    setIsGenerating(false);
-  }
-};
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "px",
+        format: [794, 1123]
+      });
+
+      pdf.addImage(dataUrl, 'PNG', 0, 0, 794, 1123);
+      pdf.save(`Softtech_Voucher_${formData.studentId}.pdf`);
+      
+    } catch (error) {
+      console.error("PDF generation failed:", error);
+      alert("Failed to generate PDF. Please try again.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   return (
     <main style={{ minHeight: "100vh", backgroundColor: "#000000", color: "#ffffff", paddingBottom: "80px" }} className="selection:bg-red-500 selection:text-white">
